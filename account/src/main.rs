@@ -18,7 +18,8 @@ struct AccountInfo {
     id: String,
     name: String,
     income: f64,
-    expense: f64
+    expense: f64,
+    total: f64
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -82,18 +83,22 @@ fn load_acc_list() -> Vec<String> {
     }
 }
 
-fn save_acc_list(account_list: &Vec<String>) {
+fn save_acc_list(account_list: &mut Vec<String>) {
     let acc_list_path = "./account_list.json";
     let json = serde_json::to_string_pretty(account_list).unwrap();
     fs::write(acc_list_path, json).expect("Failed to save account list");
 } 
 
+fn print_acc_list(account_list: &Vec<String>) {
+    println!("   Account list: ");
+    for acc in account_list {
+        println!("     > {}", acc.to_string());
+    }
+}
+
 // read account data
 fn read_data(account_list: &mut Vec<String>) {
-    println!("   Account list: ");
-    for acc in &mut *account_list {
-        println!("     => {}", acc.to_string());
-    }
+    print_acc_list(account_list);
 
     loop {
         print!("   Type your account name for further detail\n> ");
@@ -103,7 +108,7 @@ fn read_data(account_list: &mut Vec<String>) {
         io::stdin().read_line(&mut read).unwrap();
         let read_trim = read.trim().to_string();
         if read_trim == "q" { 
-            println!("Reading account command is cancel");
+            println!("   Reading account cancelled");
             return; 
         }
         if !account_list.contains(&read_trim) {
@@ -141,8 +146,10 @@ fn save_data(account_list: &mut Vec<String>) -> bool {
 
     if transaction.is_income {
         acc_data.info.income += transaction.amount;
+        acc_data.info.total += transaction.amount;
     } else {
-        acc_data.info.income -= transaction.amount;
+        acc_data.info.expense += transaction.amount;
+        acc_data.info.total -= transaction.amount;
     }
     acc_data.transaction.push(transaction);
 
@@ -159,9 +166,10 @@ fn get_statement(account_list: &mut Vec<String>) -> StatementRec {
     let is_income: bool;
     let tag: StatementType;
     let mut description: String = Default::default();
+    print_acc_list(account_list);
     loop {
         let mut input = String::new();
-        print!("   Enter account name: ");
+        print!("Enter account name: ");
         io::stdout().flush().unwrap();
 
         io::stdin().read_line(&mut input).expect("Read account name failed");
@@ -174,7 +182,7 @@ fn get_statement(account_list: &mut Vec<String>) -> StatementRec {
 
     loop {
         let mut input = String::new();
-        print!("   Enter amount: ");
+        print!("Enter amount: ");
         io::stdout().flush().unwrap();
 
         io::stdin().read_line(&mut input).expect("Read amount failed");
@@ -188,14 +196,14 @@ fn get_statement(account_list: &mut Vec<String>) -> StatementRec {
             }
         }
         Err(_) => {
-            println!("Invalid input! Please enter a valid number.");
+            println!("   Invalid input! Please enter a valid number.");
         }
     }
     }
 
     loop {
         let mut input = String::new();
-        print!("   Enter income or expense(I/E): ");
+        print!("Enter income or expense(I/E): ");
         io::stdout().flush().unwrap();
 
         io::stdin().read_line(&mut input).expect("Read boolean failed");
@@ -212,28 +220,31 @@ fn get_statement(account_list: &mut Vec<String>) -> StatementRec {
     }
 
     println!(
-        "   Statement type list
-        - Food
-        - Needed
-        - Subscription
-        - SpecialItem
-        - Transportation
-        - Rent
-        
-        - Wages
-        - PocketMoney
-        - ExtraIncome
+        "   Statement type list:
+    == Expense ==
+     > Food
+     > Needed
+     > Subscription
+     > SpecialItem
+     > Transportation
+     > Rent
 
-        - Etcetera"
+    == Income ==
+     > Wages
+     > PocketMoney
+     > ExtraIncome
+
+    == etc. ==
+     > Etcetera"
     );
-    print!("   Enter statement type: ");
+    print!("Enter statement type(or nothing for etcetra): ");
     io::stdout().flush().unwrap();
     let mut input = String::new();
     io::stdin().read_line(&mut input).unwrap();
     
     tag = get_statement_type(input.trim());
 
-    print!("   Enter description: ");
+    print!("Enter description: ");
     io::stdout().flush().unwrap();
     io::stdin().read_line(&mut description).expect("Read description failed");
 
@@ -285,7 +296,8 @@ fn create_acc(account_list: &mut Vec<String>) -> Option<String> {
                 id: id.clone(),
                 name: name.clone(),
                 income: 0.00,
-                expense: 0.00
+                expense: 0.00,
+                total: 0.00
             },
             transaction: Vec::new(),
         }
@@ -300,8 +312,46 @@ fn edit_acc(_name: String) -> bool {
     todo!();
 }
 
-fn delete_acc() -> bool {
-    todo!();
+fn delete_acc(account_list: &mut Vec<String>) -> bool {
+    print_acc_list(account_list);
+    let acc_del: String;
+
+    loop {
+        print!("   Please enter account name you which to delete: ");
+        io::stdout().flush().unwrap();
+
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).expect("Read input failed");
+        let input = input.trim().to_string();
+        if input == "q" { return false; }
+        if !account_list.contains(&input) {
+            println!("The account name doesn't exist please try again");
+        } else {
+            acc_del = input.trim().to_string();
+            break
+        }
+    }
+    let confirm_del = format!("I wish to delete {acc_del}");
+    print!("   Please type this for confirm deletion: {confirm_del}\n> ");
+    io::stdout().flush().unwrap();
+    loop {
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).expect("read input failed");
+        let input = input.trim().to_string();
+        if input == confirm_del {
+            break;
+        } else if input == "q" {
+            println!("Account deletion cancelled");
+            return false;
+        }
+        print!("   Please type this for confirm deletion: {confirm_del}\n   or type 'q' for cancelled.\n> ");
+        io::stdout().flush().unwrap();
+    }
+    let pos = account_list.iter().position(|x| x == &acc_del).unwrap();
+    account_list.remove(pos);
+    save_acc_list(account_list);
+    println!("   Account {acc_del} delele successfully");
+    return true;
 }
 
 fn main() {
@@ -335,11 +385,12 @@ fn main() {
                         println!(
                             "   Your account successfully create!\n   Here's your account name for transaction record: {acc_name}"
                         );
-                        save_acc_list(&account_list);
+                        save_acc_list(&mut account_list);
                     }
                     None => println!("   Account creation cancelled"),
                 }
             }
+            "R" => { delete_acc(&mut account_list); }
             "AT" => { save_data(&mut account_list); }
             "RD" => { read_data(&mut account_list); }
             "H" => { println!("{help_prompt}"); }

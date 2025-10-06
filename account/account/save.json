@@ -2,7 +2,7 @@
   "info": {
     "id": "ced1d975-0876-4d02-8a9b-ac3e49b04645",
     "name": "save",
-    "income": 20.0,
+    "income": 70.0,
     "expense": 0.0
   },
   "transaction": [
@@ -13,6 +13,14 @@
       "is_income": true,
       "tag": "Needed",
       "description": "Testing\n"
+    },
+    {
+      "acc_name": "save",
+      "time": "2025-10-06 17:15:42.188632 +11:00",
+      "amount": 50.0,
+      "is_income": true,
+      "tag": "SpecialItem",
+      "description": "Gift\n"
     }
   ]
 }

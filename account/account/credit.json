@@ -1,0 +1,43 @@
+{
+  "info": {
+    "id": "f81ae46a-055b-4736-8e29-a858fdcbecaf",
+    "name": "credit",
+    "income": 120.0,
+    "expense": -20.0,
+    "total": 100.0
+  },
+  "transaction": [
+    {
+      "acc_name": "credit",
+      "time": "2025-10-06 17:20:36.999293 +11:00",
+      "amount": 100.0,
+      "is_income": true,
+      "tag": "Etcetera",
+      "description": "\n"
+    },
+    {
+      "acc_name": "credit",
+      "time": "2025-10-06 17:20:48.559983 +11:00",
+      "amount": 20.0,
+      "is_income": false,
+      "tag": "Etcetera",
+      "description": "\n"
+    },
+    {
+      "acc_name": "credit",
+      "time": "2025-10-06 17:21:01.685503 +11:00",
+      "amount": 0.0,
+      "is_income": true,
+      "tag": "Etcetera",
+      "description": "\n"
+    },
+    {
+      "acc_name": "credit",
+      "time": "2025-10-06 17:23:06.361991 +11:00",
+      "amount": 20.0,
+      "is_income": true,
+      "tag": "Etcetera",
+      "description": "ads\n"
+    }
+  ]
+}

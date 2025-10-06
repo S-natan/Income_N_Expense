@@ -1,0 +1,26 @@
+{
+  "info": {
+    "id": "b3e4b2b1-4794-41a9-a990-9fb1658eca34",
+    "name": "spend",
+    "income": -129.0,
+    "expense": 0.0
+  },
+  "transaction": [
+    {
+      "acc_name": "spend",
+      "time": "2025-10-06 17:13:57.638079 +11:00",
+      "amount": 99.0,
+      "is_income": false,
+      "tag": "Rent",
+      "description": "\n"
+    },
+    {
+      "acc_name": "spend",
+      "time": "2025-10-06 17:16:45.788877 +11:00",
+      "amount": 30.0,
+      "is_income": false,
+      "tag": "Etcetera",
+      "description": "\n"
+    }
+  ]
+}
