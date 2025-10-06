@@ -1,0 +1,18 @@
+{
+  "info": {
+    "id": "ced1d975-0876-4d02-8a9b-ac3e49b04645",
+    "name": "save",
+    "income": 20.0,
+    "expense": 0.0
+  },
+  "transaction": [
+    {
+      "acc_name": "save",
+      "time": "2025-10-06 16:59:33.501067 +11:00",
+      "amount": 20.0,
+      "is_income": true,
+      "tag": "Needed",
+      "description": "Testing\n"
+    }
+  ]
+}
